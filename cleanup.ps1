@@ -1,3 +1,17 @@
+# Find and delete items in the current directory recursively that
+# match the following patterns:
+#   Thumbs.db
+#   .DS_Store
+#   ~*
+#   *.tmp
+#   *.bak
+#   *.lnk
+#
+# This code doesn't distinguish between folders and files
+# Since the Remove-Item command doesn't specify -Recurse it will prompt
+# when it happens upon a non-empty directory. The user should determine the
+# appropriate action
+
 $t_size = $t_count = 0
 $t_tmp_size = $t_tmp_count = 0
 $t_tilde_size = $t_tilde_count = 0
