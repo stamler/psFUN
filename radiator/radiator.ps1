@@ -14,7 +14,7 @@ $c_netset = Get-WmiObject Win32_NetworkAdapterConfiguration -Filter "IPEnabled =
 # Build the Report
 $user_info_source = ([ADSI]"LDAP://<SID=$([System.Security.Principal.WindowsIdentity]::GetCurrent().User)>")
 $report = @{
-    radiator_version = 5
+    radiator_version = 6
     user_given_name = $user_info_source.givenName.Value
     user_surname = $user_info_source.sn.Value
     email = $user_info_source.mail.Value
@@ -33,12 +33,6 @@ $report = @{
     boot_drive_fs = $c_volume.FileSystem
     boot_drive_cap = $c_volume.Capacity
     boot_drive_free = $c_volume.FreeSpace
-}
-
-if ($null -ne $user_info_source.objectGUID.Value) {
-    $report["user_objectGUID"] = [Guid]($user_info_source.objectGUID.Value)
-} else {
-    $report["user_objectGUID"] = $null
 }
 
 # This uniquely identifies the user
