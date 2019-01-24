@@ -43,7 +43,7 @@ if ($null -ne $user_info_source.objectGUID.Value) {
 
 # This uniquely identifies the user
 if ($null -ne $user_info_source.'mS-DS-ConsistencyGuid'.Value) {
-    $report["user_sourceAnchor"] = [System.Convert]::ToBase64String($user_info_source.'mS-DS-ConsistencyGuid'.Value)
+    $report["user_sourceAnchor"] = [System.BitConverter]::ToString($user_info_source.'mS-DS-ConsistencyGuid'.Value).Replace("-","").ToLower()
 } else {
     $report["user_sourceAnchor"] = $null
 }
