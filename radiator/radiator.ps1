@@ -14,32 +14,32 @@ $c_netset = Get-WmiObject Win32_NetworkAdapterConfiguration -Filter "IPEnabled =
 # Build the Report
 $user_info_source = ([ADSI]"LDAP://<SID=$([System.Security.Principal.WindowsIdentity]::GetCurrent().User)>")
 $report = @{
-    radiator_version = 6
-    user_given_name = $user_info_source.givenName.Value
-    user_surname = $user_info_source.sn.Value
+    radiatorVersion = 7
+    userGivenName = $user_info_source.givenName.Value
+    userSurname = $user_info_source.sn.Value
     email = $user_info_source.mail.Value
     upn = $user_info_source.UserPrincipalName.Value
     serial = $c_bios.SerialNumber
     # TODO: Merge Version and SKU into OperatingSystem string? Less flexible but simpler
-    os_version = $c_os.Version
-    os_sku = $c_os.OperatingSystemSKU
-    os_arch = $c_os.OSArchitecture
+    osVersion = $c_os.Version
+    osSku = $c_os.OperatingSystemSKU
+    osArch = $c_os.OSArchitecture
     mfg = $c_system.Manufacturer
     model = $c_system.Model
-    computer_name = $c_system.Name
-    system_type = $c_system.PCSystemType
+    computerName = $c_system.Name
+    systemType = $c_system.PCSystemType
     ram = $c_system.TotalPhysicalMemory
-    boot_drive = $c_volume.DriveLetter
-    boot_drive_fs = $c_volume.FileSystem
-    boot_drive_cap = $c_volume.Capacity
-    boot_drive_free = $c_volume.FreeSpace
+    bootDrive = $c_volume.DriveLetter
+    bootDriveFS = $c_volume.FileSystem
+    bootDriveCap = $c_volume.Capacity
+    bootDriveFree = $c_volume.FreeSpace
 }
 
 # This uniquely identifies the user
 if ($null -ne $user_info_source.'mS-DS-ConsistencyGuid'.Value) {
-    $report["user_sourceAnchor"] = [System.BitConverter]::ToString($user_info_source.'mS-DS-ConsistencyGuid'.Value).Replace("-","").ToLower()
+    $report["userSourceAnchor"] = [System.BitConverter]::ToString($user_info_source.'mS-DS-ConsistencyGuid'.Value).Replace("-","").ToLower()
 } else {
-    $report["user_sourceAnchor"] = $null
+    $report["userSourceAnchor"] = $null
 }
 
 # TODO: get user data for non-domain connected computers
@@ -61,19 +61,19 @@ ForEach ($c_net in $c_netset) {
     }
 
     $network_config = @{
-        dhcp_enabled = $c_net.DHCPEnabled
-        dhcp_server = $c_net.DHCPServer
-        dns_hostname = $c_net.DNSHostName
+        dhcpEnabled = $c_net.DHCPEnabled
+        dhcpServer = $c_net.DHCPServer
+        dnsHostname = $c_net.DNSHostName
         ips = $ip_list
         subnets = $subnet_list
         gateways = $gateway_list
-        dns_order = $dns_list
+        dnsOrder = $dns_list
     }
 
     $network_configs[$c_net.MACAddress] = $network_config
 }
 
-$report["network_config"] = $network_configs 
+$report["networkConfig"] = $network_configs 
 
 # ContentType required to prevent interpretation as multipart form data
 $request = [System.Net.WebRequest]::Create($dyle_endpoint)
