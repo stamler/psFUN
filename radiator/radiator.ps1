@@ -2,6 +2,7 @@
 # PS v3.0 and later: Get-CimInstance replaces Get-WmiObject
 # Assumes that the Azure AD Connect sourceAnchor is ms-DS-ConsistencyGuid
 
+#TODO: change name to tybalt endpoint and pull it from an environment variable
 $dyle_endpoint = "https://us-central1-charade-ca63f.cloudfunctions.net/rawLogins"
 
 # Get the Data
@@ -79,6 +80,8 @@ $report["networkConfig"] = $network_configs
 $request = [System.Net.WebRequest]::Create($dyle_endpoint)
 $request.ContentType = "application/json"
 $request.Method = "POST"
+
+# TODO: set the Authorization header to (Get-Item Env:tybalt).Value
 
 try {
     $requestStream = $request.GetRequestStream()
