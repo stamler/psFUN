@@ -2,9 +2,6 @@
 # PS v3.0 and later: Get-CimInstance replaces Get-WmiObject
 # Assumes that the Azure AD Connect sourceAnchor is ms-DS-ConsistencyGuid
 
-#TODO: change name to tybalt endpoint and pull it from an environment variable
-$dyle_endpoint = "https://us-central1-charade-ca63f.cloudfunctions.net/rawLogins"
-
 # Get the Data
 $c_bios = Get-WmiObject Win32_Bios
 $c_os = Get-WmiObject Win32_OperatingSystem
@@ -15,7 +12,7 @@ $c_netset = Get-WmiObject Win32_NetworkAdapterConfiguration -Filter "IPEnabled =
 # Build the Report
 $user_info_source = ([ADSI]"LDAP://<SID=$([System.Security.Principal.WindowsIdentity]::GetCurrent().User)>")
 $report = @{
-    radiatorVersion = 7
+    radiatorVersion = 8
     userGivenName = $user_info_source.givenName.Value
     userSurname = $user_info_source.sn.Value
     email = $user_info_source.mail.Value
@@ -77,11 +74,12 @@ ForEach ($c_net in $c_netset) {
 $report["networkConfig"] = $network_configs 
 
 # ContentType required to prevent interpretation as multipart form data
-$request = [System.Net.WebRequest]::Create($dyle_endpoint)
+$request = [System.Net.WebRequest]::Create($Env:tybaltEndpoint)
 $request.ContentType = "application/json"
 $request.Method = "POST"
+# set the Authorization header to $Env:tybaltSecret
+$request.Headers["Authorization"] = "THYBALT $Env:tybaltSecret"
 
-# TODO: set the Authorization header to (Get-Item Env:tybalt).Value
 
 try {
     $requestStream = $request.GetRequestStream()
