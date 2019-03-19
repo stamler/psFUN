@@ -1,0 +1,3 @@
+$OUDN = "OU=Human Users,DC=main,DC=company,DC=ca"
+$user_set = Get-ADUser -SearchBase $OUDN -Filter * -Properties sAMAccountName, pwdLastSet
+$user_set | Sort-Object -Property pwdLastSet | Select-Object Name, sAMAccountName, @{ Name = 'pwdLastSet'; Expression = { [datetime]::FromFileTime($_.pwdLastSet).ToString('yyyy-MM-ddTHH:mm:ssK') }} | Export-Csv -Path [Environment]::GetFolderPath("Desktop")\output.csv
