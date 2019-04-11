@@ -1,0 +1,1 @@
+Get-ADUser -Filter {-not (lastlogontimestamp -like "*")} | Select-Object Surname, GivenName | Format-Table
