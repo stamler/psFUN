@@ -38,9 +38,10 @@ $NewComputerName = (
         "-" +  $c_bios.SerialNumber
     )
 
-Write-Output $Password
 Write-Output $IPAddresses
-Write-Output $NewComputerName
+Write-Output "ansible account password: $($Password)"
+Write-Output "proposed computer name: $($NewComputerName)"
 
 # TODO: Prompt to rename computer (Type 'Yes')
+ 
  
