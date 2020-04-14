@@ -2,8 +2,9 @@
 # then display the new password. If it doesn't exist, create it and show the
 # password
 
-# TODO: Generate real password
-$Password = "A5BdC12d314x^!"
+# Generate a password
+Add-Type -AssemblyName 'System.Web'
+$Password = [System.Web.Security.Membership]::GeneratePassword(14, 1)
 $SecurePassword = $Password | ConvertTo-SecureString -AsPlainText -Force
 
 try {
@@ -17,19 +18,29 @@ catch [Microsoft.PowerShell.Commands.UserNotFoundException] {
     New-LocalUser "ansible" -Password $SecurePassword -FullName "Ansible"
 }
 
-Add-LocalGroupMember -Group "Administrators" -Member "ansible"    
+try {
+    Add-LocalGroupMember -Group "Administrators" -Member "ansible" -ErrorAction Stop
+}
+catch {
+    Write-Output "ansible is already a member of the Administrators group"    
+}
 
 # TODO: Enable WinRM per ansible docs then alert user
 
 # Get computer info and display output
 $c_bios = Get-WmiObject Win32_Bios
 $c_system = Get-WmiObject Win32_ComputerSystem
-Write-Output $c_system.Manufacturer
-Write-Output $c_bios.SerialNumber
-Write-Output ($c_system.PCSystemType -eq 2)
-# TODO: Generate computer name from MFG/Serial/PCSystemType
+
+# Generate new computer name from MFG/Serial/PCSystemType
+$NewComputerName = ( 
+        $( If ($c_system.PCSystemType -eq 2) {"M"} Else {"F"} ) + 
+        $c_system.Manufacturer.Substring(0,2).ToUpper() + 
+        "-" +  $c_bios.SerialNumber
+    )
+
 Write-Output $Password
 Write-Output $IPAddresses
 Write-Output $NewComputerName
 
-# TODO: Prompt to rename computer
+# TODO: Prompt to rename computer (Type 'Yes')
+ 
