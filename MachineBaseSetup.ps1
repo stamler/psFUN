@@ -28,7 +28,10 @@ catch {
     Write-Output "ansible is already a member of the Administrators group"    
 }
 
-# TODO: Enable WinRM per ansible docs then alert user
+# Enable WinRM
+Enable-PSRemoting -Force -SkipNetworkProfileCheck
+# TODO: verify firewall is open
+
 
 # Get computer info
 $c_bios = Get-WmiObject Win32_Bios
