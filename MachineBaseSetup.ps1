@@ -28,11 +28,6 @@ catch {
     Write-Output "ansible is already a member of the Administrators group"    
 }
 
-# Enable WinRM
-Enable-PSRemoting -Force -SkipNetworkProfileCheck
-# TODO: verify firewall is open
-
-
 # Get computer info
 $c_bios = Get-WmiObject Win32_Bios
 $c_system = Get-WmiObject Win32_ComputerSystem
@@ -66,6 +61,7 @@ if ($env:COMPUTERNAME -ne $output["ProposedComputerName"]) {
     if ($confirm -eq 'Yes') {
         Write-Host "Renaming the computer..."
         Rename-Computer -NewName $output["ProposedComputerName"] -Force -Restart
+        # TODO: Join the domain here so WinRM config is pulled from GPO
     } else {
         Write-Host "The computer was not renamed."
     }
