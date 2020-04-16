@@ -73,7 +73,7 @@ if ($c_system.PartOfDomain -eq $True) {
         Write-Host "This computer is joined to a different domain. Contact IT"
     }
 } else {
-    $confirm = Read-Host "Join the domain with the name $($output['ProposedComputerName'])"
+    $confirm = Read-Host "Join the domain with name $($output['ProposedComputerName'])? [Yes/no]"
     if ($confirm -eq 'Yes') {
         Write-Host "Joining the domain with name $($output['ProposedComputerName'])..."
         Add-Computer -Credential Get-Credential -DomainName main.tbte.ca -NewName $output["ProposedComputerName"] -OUPath "OU=WindowsUpdateEnforced,OU=Workstations SRP Blacklist,DC=main,DC=tbte,DC=ca" -Restart -Force
