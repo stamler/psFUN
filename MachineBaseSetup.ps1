@@ -54,15 +54,30 @@ Write-Host "Please copy the following information to IT, it will only appear onc
 Write-Host "*********************************************************************" -ForegroundColor Yellow
 Write-Output $output
 
-# Prompt to rename computer if proposed name is different
-if ($env:COMPUTERNAME -ne $output["ProposedComputerName"]) {
-    Write-Host "`nExisting name $($env:COMPUTERNAME) doesn't match $($output['ProposedComputerName'])"
-    $confirm = Read-Host "`nRename the computer, join the domain and reboot? [Yes/no]"
+
+# Prompt to rename computer or join domain as necessary
+if ($c_system.PartOfDomain -eq $True) {
+    if ($c_system.Domain -eq "main.tbte.ca") {
+        if ($env:COMPUTERNAME -eq $output["ProposedComputerName"]) {
+            Write-Host "Domain membership and name are correct."
+        } else {
+            $confirm = Read-Host "Rename the domain-joined computer? [Yes/no]"
+            if ($confirm -eq 'Yes') {
+                Write-Host "Renaming domain joined computer..."
+                Rename-Computer -NewName $output["ProposedComputerName"] -DomainCredential Get-Credential -Force -Restart
+            } else {
+                Write-Host "The computer was not renamed."
+            }
+        }
+    } else {
+        Write-Host "This computer is joined to a different domain. Contact IT"
+    }
+} else {
+    $confirm = Read-Host "Join the domain with the name $($output['ProposedComputerName'])"
     if ($confirm -eq 'Yes') {
-        Write-Host "Renaming the computer and joining the domain..."
+        Write-Host "Joining the domain with name $($output['ProposedComputerName'])..."
         Add-Computer -Credential Get-Credential -DomainName main.tbte.ca -NewName $output["ProposedComputerName"] -OUPath "OU=WindowsUpdateEnforced,OU=Workstations SRP Blacklist,DC=main,DC=tbte,DC=ca" -Restart -Force
     } else {
         Write-Host "The computer was not renamed or joined to the domain."
     }
 }
- 
