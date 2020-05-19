@@ -33,6 +33,8 @@ ForEach ($G in $Guests) {
        Write-Host "Last audit record for" $G.DisplayName "on" $LastAuditRecord "for" $LastAuditAction -Foregroundcolor Green
     } Else { 
         Write-Host "No audit records found in the last 90 days for" $G.DisplayName "; account created on" $G.RefreshTokensValidFromDateTime -Foregroundcolor Red
+        Remove-AzureADUser -ObjectId $G.ObjectId
+        Write-Host "Deleted Guest " $G.DisplayName
     } 
   
     # Write out report line     
