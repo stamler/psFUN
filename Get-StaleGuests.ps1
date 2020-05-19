@@ -55,5 +55,5 @@ Write-Host "Statistics"
 Write-Host "----------"
 Write-Host "Guest Accounts          " $Guests.Count
 Write-Host "Active Guests           " $Active
-Write-Host "Audit Record foun       " $AuditRec
-Write-Host "InActive Guests         " ($Guests.Count - $Active)
+Write-Host "Audit Record found      " $AuditRec
+Write-Host "Inactive Guests         " ($Guests.Count - $Active)
