@@ -30,7 +30,8 @@ $user = New-ADUser `
  -AccountPassword $SecurePassword `
  -Enabled $True `
  -OtherAttributes @{'mail'=$upn} `
- -PassThru
+ -PassThru `
+ -ChangePasswordAtLogon $True
 
 # Add user to groups
 Add-ADGroupMember -Identity "TBTE_General" -Members $user
