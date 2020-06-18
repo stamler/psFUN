@@ -8,6 +8,7 @@
     TODO: BUG: Set-MsolUserLicense on Line 124 fails if the user has multiple
     licenses already assigned. The thrown error says the license is invalid, 
     it’s really not. It throws because that user already had that license set to add. 
+    https://www.toddklindt.com/blog/Lists/Posts/Post.aspx?ID=673
 #>
 
 #Office 365 Admin Credentials
@@ -32,7 +33,8 @@ $Licenses = @{
 $UsageLocation = 'CA'
     
 #Get all currently licensed users and put them in a custom object
-$LicensedUserDetails = Get-MsolUser -All | Where-Object {$_.IsLicensed -eq 'True'} | ForEach-Object {
+$LicensedUserDetails = Get-MsolUser | Where-Object {($_.ImmutableId -ne $null) -and ($_.IsLicensed -eq 'True')} | ForEach-Object {
+#$LicensedUserDetails = Get-MsolUser -Synchronized | Where-Object {$_.IsLicensed -eq 'True'} | ForEach-Object {
  [pscustomobject]@{
             UserPrincipalName = $_.UserPrincipalName
             License = $_.Licenses.AccountSkuId
