@@ -35,6 +35,16 @@ $user = New-ADUser `
 # Add user to groups
 Add-ADGroupMember -Identity "TBTE_General" -Members $user
 
+# Setup licensing group
+$software = Read-Host "Does the user require a Desktop software license? [Yes/no]"
+if ($software -eq 'Yes') {
+	Write-Host "Adding the user to TBTE_Desktop_Software group..."
+	Add-ADGroupMember -Identity "TBTE_Desktop_Software" -Members $user
+} else {
+	Write-Host "Adding the user to TBTE_Mobile_Software..."
+	Add-ADGroupMember -Identity "TBTE_Mobile_Software" -Members $user
+}
+
 # Show the created username and password
 Write-Output "$upn : $pw"
 
