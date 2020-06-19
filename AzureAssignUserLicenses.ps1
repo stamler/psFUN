@@ -17,8 +17,6 @@ $Credential = Get-AutomationPSCredential -Name "License Automation Bot"
 #Connect to Office 365 
 Connect-MsolService -Credential $Credential
 
-$LicenseOptions = New-MsolLicenseOptions -AccountSkuId "tbte:O365_BUSINESS_PREMIUM" #-DisabledPlans "SWAY","KAIZALA_O365_P2"
-
 $Licenses = @{
       'Microsoft365BusinessStandard' = @{ 
             LicenseSKU = 'tbte:O365_BUSINESS_PREMIUM'
@@ -89,11 +87,11 @@ foreach ($license in $Licenses.Keys) {
             try {  
                   #Assign UsageLocation and License.
                   Set-MsolUser -UserPrincipalName $User -UsageLocation $UsageLocation -ErrorAction Stop -WarningAction Stop
-                  Set-MsolUserLicense -UserPrincipalName $User -AddLicenses $AccountSKU.AccountSkuId -LicenseOptions $LicenseOptions -ErrorAction Stop -WarningAction Stop
+                  Set-MsolUserLicense -UserPrincipalName $User -AddLicenses $AccountSKU.AccountSkuId -ErrorAction Stop -WarningAction Stop
                   Write-Output "SUCCESS: Licensed $User with $license"
             } catch {  
                   Write-Warning "Error when licensing $User"
-    
+                  Write-Warning $Error[0]
             }
             
           }  
@@ -124,7 +122,7 @@ if ($null -ne $UsersToChangeOrDelete) {
               if ($ChangeLicense) {
                     #The user were assigned to another group, switch license to the new one.
                     try {  
-                          Set-MsolUserLicense -UserPrincipalName $User -RemoveLicenses $ChangeLicense.OldLicense -AddLicenses $ChangeLicense.NewLicense -LicenseOptions $LicenseOptions -ErrorAction Stop -WarningAction Stop
+                          Set-MsolUserLicense -UserPrincipalName $User -RemoveLicenses $ChangeLicense.OldLicense -AddLicenses $ChangeLicense.NewLicense -ErrorAction Stop -WarningAction Stop
                           Write-Output "SUCCESS: Changed license for user $User from $($ChangeLicense.OldLicense) to $($ChangeLicense.NewLicense)"
                     } catch {  
                           Write-Warning "Error when changing license on $User`r`n$_"
