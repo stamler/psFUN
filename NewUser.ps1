@@ -13,8 +13,21 @@ if ( $middle.Length -ge 1) {
 $upn = $uname + "@tbte.ca"
 
 # Generate a password
-Add-Type -AssemblyName 'System.Web'
-$pw = [System.Web.Security.Membership]::GeneratePassword(14, 1)
+$valid_pw = $false
+$pw = $null
+Do {
+  $pw = -join ('abcdefghkmnrstuvwxyzABCDEFGHKLMNPRSTUVWXYZ23456789$%&*#'.ToCharArray() | Get-Random -Count 14)
+  If ( 
+    ($pw -cmatch "[A-Z]") `
+    -and ($pw -cmatch "[a-z]") `
+    -and ($pw -match "[\d]") `
+    -and ($pw -match "[^\w ]") ) {
+      $valid_pw = $true
+    } else {
+      $valid_pw = $false
+    }
+    $count ++
+} while ($false -eq $valid_pw)
 $SecurePassword = $pw | ConvertTo-SecureString -AsPlainText -Force
 
 # Create the user
