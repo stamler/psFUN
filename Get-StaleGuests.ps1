@@ -16,7 +16,8 @@ $AuditRec = 0
 $Report = [System.Collections.Generic.List[Object]]::new()
 
 #EXOv2
-#Connect-ExchangeOnline 
+# NB if you don't do this Search-UnifiedAuditLog will return $null for all users and all guests will be deleted!!!!
+Connect-ExchangeOnline 
 
 ForEach ($G in $Guests) {
     Write-Host $G.DisplayName
