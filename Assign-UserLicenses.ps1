@@ -13,7 +13,7 @@
 #>
 
 #Office 365 Admin Credentials
-$Credential = Get-AutomationPSCredential -Name "License Automation Bot"
+$Credential = Get-AutomationPSCredential -Name "Azure Automation Bot"
 
 #Connect to Office 365 
 Connect-MsolService -Credential $Credential
