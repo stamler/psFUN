@@ -34,7 +34,7 @@ ForEach ($G in $Guests) {
        $LastAuditRecord = $Recs[0].CreationDate
        $LastAuditAction = $Recs[0].Operations
        $AuditRec++
-       Write-Output "Last audit record for $($G.DisplayName) on $LastAuditRecord for $LastAuditAction"
+       #Write-Output "Last audit record for $($G.DisplayName) on $LastAuditRecord for $LastAuditAction"
     } Else { 
         Write-Output "No audit records found in the last 90 days for $($G.DisplayName); account created on $($G.RefreshTokensValidFromDateTime)"
         Remove-AzureADUser -ObjectId $G.ObjectId
