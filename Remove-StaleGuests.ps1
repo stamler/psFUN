@@ -54,7 +54,6 @@ ForEach ($G in $Guests) {
 
 $Active = $AuditRec
 #$Report | Export-CSV -NoTypeInformation c:\temp\GuestActivity.csv
-Write-Output "Guest Accounts $($Guests.Count)"
-Write-Output "Active Guests $Active"
-Write-Output "Audit Record found $AuditRec"
-Write-Output "Inactive Guests $($Guests.Count - $Active)"
+Write-Output "$Active of $($Guests.Count) guest accounts are active"
+Write-Output "$AuditRec audit records found"
+Write-Output "$($Guests.Count - $Active) inactive guests deleted"
