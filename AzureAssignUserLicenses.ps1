@@ -1,3 +1,4 @@
+# This script is written to run in Azure Automation
 <#  
 .SYNOPSIS 
     Script that assigns Office 365 licenses based on Group membership..
