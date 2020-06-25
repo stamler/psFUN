@@ -1,9 +1,11 @@
 # Get Stale Guests in Azure AD
 # Adapted from https://www.petri.com/guest-account-obsolete-activity
 
+#Office 365 Admin Credentials
+$Credential = Get-AutomationPSCredential -Name "Azure Automation Bot"
 
 # Get all guests
-#Connect-AzureAD
+Connect-AzureAD -Credential $Credential
 $Filter = "UserType eq 'Guest'"
 $Guests = Get-AzureADUser -All $true -Filter $Filter
 
@@ -16,11 +18,12 @@ $AuditRec = 0
 $Report = [System.Collections.Generic.List[Object]]::new()
 
 #EXOv2
-# NB if you don't do this Search-UnifiedAuditLog will return $null for all users and all guests will be deleted!!!!
-Connect-ExchangeOnline 
+# NB if you don't connect, Search-UnifiedAuditLog will return $null 
+# for all users and all guests will be deleted!!!!
+Connect-ExchangeOnline -Credential $Credential
 
 ForEach ($G in $Guests) {
-    Write-Host $G.DisplayName
+    Write-Output $G.DisplayName
     $LastAuditAction = $Null
     $LastAuditRecord = $Null
 
@@ -31,11 +34,11 @@ ForEach ($G in $Guests) {
        $LastAuditRecord = $Recs[0].CreationDate
        $LastAuditAction = $Recs[0].Operations
        $AuditRec++
-       Write-Host "Last audit record for" $G.DisplayName "on" $LastAuditRecord "for" $LastAuditAction -Foregroundcolor Green
+       Write-Output "Last audit record for" $G.DisplayName "on" $LastAuditRecord "for" $LastAuditAction -Foregroundcolor Green
     } Else { 
-        Write-Host "No audit records found in the last 90 days for" $G.DisplayName "; account created on" $G.RefreshTokensValidFromDateTime -Foregroundcolor Red
+        Write-Output "No audit records found in the last 90 days for" $G.DisplayName "; account created on" $G.RefreshTokensValidFromDateTime -Foregroundcolor Red
         Remove-AzureADUser -ObjectId $G.ObjectId
-        Write-Host "Deleted Guest " $G.DisplayName
+        Write-Output "Deleted Guest " $G.DisplayName
     } 
   
     # Write out report line     
@@ -51,10 +54,8 @@ ForEach ($G in $Guests) {
 
 $Active = $AuditRec
 #$Report | Export-CSV -NoTypeInformation c:\temp\GuestActivity.csv      
-Write-Host ""
-Write-Host "Statistics"
-Write-Host "----------"
-Write-Host "Guest Accounts          " $Guests.Count
-Write-Host "Active Guests           " $Active
-Write-Host "Audit Record found      " $AuditRec
-Write-Host "Inactive Guests         " ($Guests.Count - $Active)
+Write-Output "Statistics:"
+Write-Output "Guest Accounts          " $Guests.Count
+Write-Output "Active Guests           " $Active
+Write-Output "Audit Record found      " $AuditRec
+Write-Output "Inactive Guests         " ($Guests.Count - $Active)
