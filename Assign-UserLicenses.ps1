@@ -10,6 +10,9 @@
     licenses already assigned. The thrown error says the license is invalid, 
     it’s really not. It throws because that user already had that license set to add. 
     https://www.toddklindt.com/blog/Lists/Posts/Post.aspx?ID=673
+
+    The exact issue is documented here:
+    https://365lab.net/2016/01/03/license-your-office-365azure-ad-users-with-azure-automation/#comment-5952
 #>
 
 #Office 365 Admin Credentials
