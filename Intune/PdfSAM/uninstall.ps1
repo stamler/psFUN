@@ -1,0 +1,1 @@
+choco uninstall pdfsam pdfsam.install -y

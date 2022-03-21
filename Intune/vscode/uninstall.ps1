@@ -1,0 +1,1 @@
+choco uninstall vscode vscode.install -y
