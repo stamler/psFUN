@@ -1,1 +1,1 @@
-choco uninstall vscode vscode.install -y
+ & 'C:\Program Files\Microsoft VS Code\unins000.exe' /verysilent /norestart

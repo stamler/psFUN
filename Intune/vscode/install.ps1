@@ -1,10 +1,1 @@
-$localprograms = choco list --localonly
-if ($localprograms -like "*vscode*")
-{
-    choco upgrade vscode -y
-}
-Else
-{
-    choco install vscode -y
-}
-#C:\Program Files\Microsoft VS Code
+ .\VSCodeSetup-x64-1.65.2.exe /verysilent /norestart /mergetasks=!runcode /log="$($env:TEMP)VSCodeInstall.log" 
