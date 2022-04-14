@@ -3,8 +3,9 @@
 # edit time of the parent job folder is not considered.
 
 $parentdir = “F:\projects\Proposals\2019”
+$pattern = "P\d\d-\d{3,4}(-\d{1,3})?"
 $output = @()
-foreach($project in Get-ChildItem $parentdir) {
+foreach($project in Get-ChildItem -Directory $parentdir | where-object {$_.name -match $pattern}) {
   $newestitem = Get-ChildItem $project.FullName | sort LastWriteTime | select -last 1
   $output += [PSCustomObject]@{
     project = $project.FullName
