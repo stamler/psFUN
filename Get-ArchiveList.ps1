@@ -2,7 +2,9 @@
 # the most recently modified file in the job then output it to a CSV file. The
 # edit time of the parent job folder is not considered.
 
-$ageindays = 600;
+$ageindays = 1000
+$moveitems = $false
+$destination = "\\nas2.main.tbte.ca\Archive\Proposals\2019\r\"
 $parentdir = “F:\projects\Proposals\2019”
 $pattern = "P\d\d-\d{3,4}(-\d{1,3})?"
 $output = @()
@@ -29,6 +31,10 @@ foreach($project in Get-ChildItem -Directory $parentdir | where-object {$_.name 
       size = $bytesize
       count = $projsize.Count
     }
+    if ($moveitems -eq $true) {
+      # Move the job to the staging area in the archive
+      Move-Item -Path $project.FullName -Destination $destination
+    }  
   }
 }
 $output | Export-Csv output.csv
