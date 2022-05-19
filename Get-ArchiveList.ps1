@@ -4,12 +4,18 @@
 
 $ageindays = 600
 $moveitems = $false
-$destination = "\\nas2.main.tbte.ca\Archive\Projects\2019\r\"
-$parentdir = “F:\projects\Projects\2019”
+$destination = "\\nas2.main.tbte.ca\Archive\Projects\2018\r\"
+$parentdir = “F:\projects\Projects\2018”
 #$pattern = "P\d\d-\d{3,4}(-\d{1,3})?"
 $pattern = "\d\d-\d{3,4}(-\d{1,3})?"
 $output = @()
-foreach($project in Get-ChildItem -Directory $parentdir | where-object {$_.name -match $pattern}) {
+$projects = Get-ChildItem -Directory $parentdir | where-object {$_.name -match $pattern}
+$folderCount = ($projects | Measure-Object).Count
+$itemNumber = 0
+foreach($project in $projects) {
+  $percentComplete = [int]($itemNumber * 100 / $folderCount)
+  $itemNumber ++
+  Write-Progress -Activity Archiving -Status $project.FullName -PercentComplete $percentComplete
   $bytesize = 0
   $reportString = "---`r`n$($project.FullName)`r`n"
   $projsize = Get-ChildItem -Path $project.FullName -Recurse | Where-Object { $_.PsIsContainer -eq $false }| Measure-Object -Sum Length | Select-Object Sum, Count
