@@ -13,9 +13,9 @@ $projects = Get-ChildItem -Directory $parentdir | where-object {$_.name -match $
 $folderCount = ($projects | Measure-Object).Count
 $itemNumber = 0
 foreach($project in $projects) {
-  $percentComplete = [int]($itemNumber * 100 / $folderCount)
   $itemNumber ++
-  Write-Progress -Activity Archiving -Status $project.FullName -PercentComplete $percentComplete
+  $percentComplete = [int]($itemNumber * 100 / $folderCount)
+  Write-Progress -Id 1 -Activity Archiving -Status $project.FullName -PercentComplete $percentComplete -CurrentOperation "Analyzing"
   $bytesize = 0
   $reportString = "---`r`n$($project.FullName)`r`n"
   $projsize = Get-ChildItem -Path $project.FullName -Recurse | Where-Object { $_.PsIsContainer -eq $false }| Measure-Object -Sum Length | Select-Object Sum, Count
@@ -43,6 +43,7 @@ foreach($project in $projects) {
     }
     if ($moveitems -eq $true) {
       # Move the job to the staging area in the archive
+      Write-Progress -Id 1 -Activity Archiving -Status $project.FullName -PercentComplete $percentComplete -CurrentOperation "Moving"
       Move-Item -Path $project.FullName -Destination $destination
       $reportString += "Item moved"
     } else {
