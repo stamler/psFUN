@@ -3,11 +3,13 @@
 # edit time of the parent job folder is not considered.
 
 $ageindays = 600
+$year = "2019"
+$jobType = "Proposals"
 $moveitems = $false
-$destination = "\\nas2.main.tbte.ca\Archive\Projects\2018\r\"
-$parentdir = “F:\projects\Projects\2018”
-#$pattern = "P\d\d-\d{3,4}(-\d{1,3})?"
-$pattern = "\d\d-\d{3,4}(-\d{1,3})?"
+
+$destination = "\\nas2.main.tbte.ca\Archive\$jobType\$year\r\"
+$parentdir = “F:\projects\$jobType\$year”
+$pattern = if ($jobType -eq 'Projects') { "\d\d-\d{3,4}(-\d{1,3})?" } else { "P\d\d-\d{3,4}(-\d{1,3})?" }
 $output = @()
 $projects = Get-ChildItem -Directory $parentdir | where-object {$_.name -match $pattern}
 $folderCount = ($projects | Measure-Object).Count
