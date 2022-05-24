@@ -3,8 +3,8 @@
 # edit time of the parent job folder is not considered.
 
 $ageindays = 600
-$year = "2019"
-$jobType = "Proposals"
+$year = "2018"
+$jobType = "Projects"
 $moveitems = $false
 
 $destination = "\\nas2.main.tbte.ca\Archive\$jobType\$year\r\"
@@ -46,7 +46,7 @@ foreach($project in $projects) {
     if ($moveitems -eq $true) {
       # Move the job to the staging area in the archive
       Write-Progress -Id 1 -Activity Archiving -Status $project.FullName -PercentComplete $percentComplete -CurrentOperation "Moving"
-      Move-Item -Path $project.FullName -Destination $destination
+      Move-Item -Path $project.FullName -Destination $destination -ErrorAction SilentlyContinue -ErrorVariable +moveErrors
       $reportString += "Item moved"
     } else {
       $reportString += "Dry Run: $($project.FullName) > $destination"
@@ -56,4 +56,11 @@ foreach($project in $projects) {
   }
   Write-Host $reportString
 }
-$output | Export-Csv output.csv 
+if ($moveErrors.Count -gt 0) {
+  Write-Output "Move-Item Errors Unique TargetObjects:"
+  Write-Output $moveErrors | Select-Object -Property TargetObject -Unique
+} else {
+  Write-Output "No move errors"
+}
+$csvPath = $(Get-Location).Path + "\$year-$jobType-" + $(Get-Date -Format "yyyy-MM-dd HH-mm") + $(if ($moveitems -eq $true) { " Archive" } else { " DryRun" }) + ".csv"
+$output | Export-Csv -Path $csvPath 
