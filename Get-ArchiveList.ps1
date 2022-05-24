@@ -8,6 +8,11 @@ $jobType = "Projects"
 $moveitems = $false
 
 $destination = "\\nas2.main.tbte.ca\Archive\$jobType\$year\r\"
+# Create the folder if it doesn't exist
+if (!(Test-Path $destination)) {
+  New-Item -ItemType Directory -Path $destination
+}
+
 $parentdir = “F:\projects\$jobType\$year”
 $pattern = if ($jobType -eq 'Projects') { "\d\d-\d{3,4}(-\d{1,3})?" } else { "P\d\d-\d{3,4}(-\d{1,3})?" }
 $output = @()
@@ -58,6 +63,8 @@ foreach($project in $projects) {
 }
 if ($moveErrors.Count -gt 0) {
   Write-Output "Move-Item Errors Unique TargetObjects:"
+  # TODO: TargetObject only contains the file name, not the full path.
+  # We must have the full path to the file in order to remediate the error.
   Write-Output $moveErrors | Select-Object -Property TargetObject -Unique
 } else {
   Write-Output "No move errors"
