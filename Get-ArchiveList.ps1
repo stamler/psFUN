@@ -2,10 +2,17 @@
 # the most recently modified file in the job then output it to a CSV file. The
 # edit time of the parent job folder is not considered.
 
-$ageindays = 600
-$year = "2018"
-$jobType = "Projects"
-$moveitems = $false
+param(
+  [String]$Year = 2018,
+  [switch]$Proposals = $false,
+  [int]$Age = 600,
+  [switch]$Move = $false
+);
+
+$ageindays = $Age
+$year = $Year
+$jobType = if ($Proposals) { "Proposals" } else { "Projects" }
+$moveitems = $Move
 
 $destination = "\\nas2.main.tbte.ca\Archive\$jobType\$year\r\"
 # Create the folder if it doesn't exist
@@ -16,6 +23,7 @@ if (!(Test-Path $destination)) {
 $parentdir = “F:\projects\$jobType\$year”
 $pattern = if ($jobType -eq 'Projects') { "\d\d-\d{3,4}(-\d{1,3})?" } else { "P\d\d-\d{3,4}(-\d{1,3})?" }
 $output = @()
+$jobsWithErrors = @()
 $projects = Get-ChildItem -Directory $parentdir | where-object {$_.name -match $pattern}
 $folderCount = ($projects | Measure-Object).Count
 $itemNumber = 0
@@ -51,7 +59,12 @@ foreach($project in $projects) {
     if ($moveitems -eq $true) {
       # Move the job to the staging area in the archive
       Write-Progress -Id 1 -Activity Archiving -Status $project.FullName -PercentComplete $percentComplete -CurrentOperation "Moving"
+      $moveErrorsCount = $moveErrors.Count
       Move-Item -Path $project.FullName -Destination $destination -ErrorAction SilentlyContinue -ErrorVariable +moveErrors
+      if ($moveErrors.Count -gt $moveErrorsCount) {
+        $reportString += "`r`nThere were error(s) moving the folder to the archive"
+        $jobsWithErrors += $project.FullName
+      }
       $reportString += "Item moved"
     } else {
       $reportString += "Dry Run: $($project.FullName) > $destination"
@@ -62,7 +75,8 @@ foreach($project in $projects) {
   Write-Host $reportString
 }
 if ($moveErrors.Count -gt 0) {
-  Write-Output "Move-Item Errors Unique TargetObjects:"
+  Write-Output "`r`nMove-Item Errors Unique TargetObjects:"
+  Write-Output $jobsWithErrors | Sort-Object -Unique
   # TODO: TargetObject only contains the file name, not the full path.
   # We must have the full path to the file in order to remediate the error.
   Write-Output $moveErrors | Select-Object -Property TargetObject -Unique
