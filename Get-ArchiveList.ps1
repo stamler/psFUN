@@ -85,6 +85,9 @@ function Archive-Jobs {
   }
   $csvPath = $(Get-Location).Path + "\$year-$jobType-" + $(Get-Date -Format "yyyy-MM-dd HH-mm") + $(if ($moveitems -eq $true) { " Archive" } else { " DryRun" }) + ".csv"
   $output | Export-Csv -Path $csvPath
+
+  # TODO: Sanity check by verifying that there is no overlap between the jobs in
+  # the destination folder and the jobs in parentdir
 }
 
 Archive-Jobs -Proposals -Year 2019
