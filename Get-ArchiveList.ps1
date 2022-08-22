@@ -7,7 +7,7 @@ function Archive-Jobs {
     [Parameter(Mandatory=$true)]
     [String]$Year,
     [switch]$Proposals = $false,
-    [int]$Age = 600,
+    [int]$Age = 400,
     [switch]$Move = $false
   )
 
@@ -90,6 +90,4 @@ function Archive-Jobs {
   # the destination folder and the jobs in parentdir
 }
 
-Archive-Jobs -Proposals -Year 2019
-Archive-Jobs -Proposals -Year 2020
-Archive-Jobs -Proposals -Year 2021
+Archive-Jobs -Year 2015
