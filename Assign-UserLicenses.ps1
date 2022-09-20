@@ -17,8 +17,6 @@
 
 #Office 365 Admin Credentials
 $Credential = Get-AutomationPSCredential -Name "Azure Automation Bot"
-
-#Connect to Office 365 
 Connect-MsolService -Credential $Credential
 
 $Licenses = @{
@@ -29,6 +27,10 @@ $Licenses = @{
       'Microsoft365BusinessBasic' = @{
             LicenseSKU = 'tbte:O365_BUSINESS_ESSENTIALS'
             Group = 'TBTE_Mobile_Software'
+      }
+      'Microsoft365BusinessPremium' = @{
+            LicenseSKU = 'tbte:SPB'
+            Group = 'TBTE_Premium_Software'
       }
 }
     
