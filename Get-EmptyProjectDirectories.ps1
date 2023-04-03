@@ -22,6 +22,15 @@ $XX = $Year.Substring(2,2)
 # pattern XX-YYY
 $emptyDirectories = Get-ChildItem $directory -Recurse | Where-Object {$_.PSIsContainer -and @(Get-ChildItem $_.FullName -Force).Count -eq 0 -and ($_.FullName -notlike "$directory/$XX-*") -and ($_.FullName.Split("\")[-1] -notlike "$XX-*")}
 
+# Audit the result
+foreach ($item in $emptyDirectories) {
+  if ((Get-ChildItem -Path $item.FullName | Measure-Object).Count -gt 0) {
+    Write-Output "$item.FullName is not empty"
+    Write-Output "Exiting..."
+    Exit 1
+  }
+}
+
 # if the -Delete parameter is specified, the script will delete the empty
 # directories, otherwise it will only write the CSV file.
 if ($Delete) {
