@@ -34,8 +34,10 @@ do {
   $emptyDirectories = Get-ChildItem $directory -Recurse | Where-Object {$_.PSIsContainer -and @(Get-ChildItem $_.FullName -Force).Count -eq 0 -and ($_.FullName -notlike "$directory/$XX-*") -and ($_.FullName.Split("\")[-1] -notlike "$XX-*")} | ForEach-Object {
     $currentDirectory = $_.FullName
     Write-Progress -Activity "Getting empty directories (pass ${pass})..." -Status $currentDirectory
+    return $_
   }
   # Audit the result
+  Write-Host "Auditing $($emptyDirectories.Count) empty directories in $directory..."
   foreach ($item in $emptyDirectories) {
     Write-Progress -Activity "Auditing $($item.FullName)" -Status "Progress" -PercentComplete (($emptyDirectories.IndexOf($item) + 1) / $emptyDirectories.Count * 100)
     if ((Get-ChildItem -Path $item.FullName | Measure-Object).Count -gt 0) {
@@ -57,11 +59,11 @@ do {
     }
   } else {
     # Write the list of empty directories to a CSV file
-    $emptyDirectories | Select-Object FullName | Export-Csv -Path "empty_directories_${Year}_pass${pass}.csv" -NoTypeInformation
+    $emptyDirectories | Select-Object FullName | Export-Csv -Path "empty_directories_${Year}_DryRun.csv" -NoTypeInformation
   }
 
   # Increment the pass number
   $pass++
 } while (
-  $emptyDirectories.Count -gt 0
+  $emptyDirectories.Count -gt 0 -and $Delete -eq $true
 )
