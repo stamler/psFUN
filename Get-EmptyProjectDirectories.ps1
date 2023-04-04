@@ -8,8 +8,17 @@
 Param(
   [Parameter(Mandatory=$true)]
   [string]$Year,
-  [switch]$Delete
+  [switch]$Delete,
+  [switch]$MultiPass # This has no effect if the -Delete parameter is not specified
 )
+
+# if $MultiPass is specified and $Delete is not, report that $MultiPass has no
+# effect and exit
+if ($MultiPass -and -not $Delete) {
+  Write-Output "The -MultiPass parameter has no effect if the -Delete parameter is not specified."
+  Write-Output "Exiting..."
+  Exit 1
+}
 
 # Set the path to the current directory
 $proj_root = "Y:\Projects"
@@ -37,7 +46,6 @@ do {
     return $_
   }
   # Audit the result
-  Write-Host "Auditing $($emptyDirectories.Count) empty directories in $directory..."
   foreach ($item in $emptyDirectories) {
     Write-Progress -Activity "Auditing $($item.FullName)" -Status "Progress" -PercentComplete (($emptyDirectories.IndexOf($item) + 1) / $emptyDirectories.Count * 100)
     if ((Get-ChildItem -Path $item.FullName | Measure-Object).Count -gt 0) {
@@ -65,5 +73,5 @@ do {
   # Increment the pass number
   $pass++
 } while (
-  $emptyDirectories.Count -gt 0 -and $Delete -eq $true
+  $emptyDirectories.Count -gt 0 -and $Delete -eq $true -and $MultiPass -eq $true -and $pass -lt 10
 )
