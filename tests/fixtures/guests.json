@@ -1,0 +1,113 @@
+{
+  "claims": {
+    "oid": "6959416e-404d-4485-a5af-e23264eb240d",
+    "roles": [
+      "User.ReadWrite.All",
+      "AuditLogsQuery.Read.All"
+    ]
+  },
+  "guests": [
+    {
+      "createdDateTime": "2020-01-01T00:00:00Z",
+      "externalUserState": "Accepted",
+      "externalUserStateChangeDateTime": null,
+      "otherMails": [],
+      "id": "00000000-0000-0000-0000-000000000001",
+      "displayName": "active",
+      "userPrincipalName": "active_example.test#EXT#@tenant.test",
+      "mail": "active@example.test"
+    },
+    {
+      "createdDateTime": "2020-01-01T00:00:00Z",
+      "externalUserState": "Accepted",
+      "externalUserStateChangeDateTime": null,
+      "otherMails": [],
+      "id": "00000000-0000-0000-0000-000000000002",
+      "displayName": "inactive",
+      "userPrincipalName": "inactive_example.test#EXT#@tenant.test",
+      "mail": "inactive@example.test"
+    },
+    {
+      "createdDateTime": "2099-01-01T00:00:00Z",
+      "externalUserState": "Accepted",
+      "externalUserStateChangeDateTime": null,
+      "otherMails": [],
+      "id": "00000000-0000-0000-0000-000000000003",
+      "displayName": "recent",
+      "userPrincipalName": "recent_example.test#EXT#@tenant.test",
+      "mail": "recent@example.test"
+    },
+    {
+      "createdDateTime": null,
+      "externalUserState": "Accepted",
+      "externalUserStateChangeDateTime": null,
+      "otherMails": [],
+      "id": "00000000-0000-0000-0000-000000000004",
+      "displayName": "missing",
+      "userPrincipalName": "missing_example.test#EXT#@tenant.test",
+      "mail": "missing@example.test"
+    },
+    {
+      "createdDateTime": "2020-01-01T00:00:00Z",
+      "externalUserState": "Accepted",
+      "externalUserStateChangeDateTime": "2099-01-01T00:00:00Z",
+      "otherMails": [],
+      "id": "00000000-0000-0000-0000-000000000005",
+      "displayName": "invited",
+      "userPrincipalName": "invited_example.test#EXT#@tenant.test",
+      "mail": "invited@example.test"
+    },
+    {
+      "createdDateTime": "2020-01-01T00:00:00Z",
+      "externalUserState": "Accepted",
+      "externalUserStateChangeDateTime": null,
+      "otherMails": [],
+      "id": "00000000-0000-0000-0000-000000000006",
+      "displayName": "actor",
+      "userPrincipalName": "actor_example.test#EXT#@tenant.test",
+      "mail": "actor@example.test"
+    },
+    {
+      "createdDateTime": "2020-01-01T00:00:00Z",
+      "externalUserState": "Accepted",
+      "externalUserStateChangeDateTime": null,
+      "otherMails": [],
+      "id": "00000000-0000-0000-0000-000000000007",
+      "displayName": "shared",
+      "userPrincipalName": "shared_example.test#EXT#@tenant.test",
+      "mail": "active@example.test"
+    }
+  ],
+  "records": [
+    {
+      "id": "record-1",
+      "operation": "SecureLinkUsed",
+      "daysAgo": 1,
+      "userPrincipalName": "i:0#.f|membership|ACTIVE@example.test",
+      "userId": null,
+      "auditData": null
+    },
+    {
+      "id": "record-2",
+      "operation": "UserLoggedIn",
+      "daysAgo": 2,
+      "userPrincipalName": null,
+      "userId": null,
+      "auditData": {
+        "Actor": [
+          {
+            "ID": "00000000-0000-0000-0000-000000000006"
+          }
+        ]
+      }
+    },
+    {
+      "id": "record-3",
+      "operation": "TeamsSessionStarted",
+      "daysAgo": 3,
+      "userPrincipalName": "employee@example.test",
+      "userId": null,
+      "auditData": null
+    }
+  ]
+}

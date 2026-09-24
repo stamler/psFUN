@@ -1,0 +1,143 @@
+{
+  "groups": [
+    {
+      "id": "754b52a3-0854-4564-81d7-737c2a16be2b",
+      "displayName": "TBTE_Desktop_Software"
+    },
+    {
+      "id": "872d4475-cf3f-4498-be55-eb54ca37f99f",
+      "displayName": "TBTE_Mobile_Software"
+    },
+    {
+      "id": "f1487162-81bc-4051-8d0f-b123ab557060",
+      "displayName": "TBTE_Premium_Software"
+    }
+  ],
+  "skus": [
+    {
+      "skuId": "f245ecc8-75af-4f8e-b61f-27d8114de5f3",
+      "skuPartNumber": "O365_BUSINESS_PREMIUM",
+      "capabilityStatus": "Enabled",
+      "prepaidUnits": {
+        "enabled": 0,
+        "warning": 0
+      },
+      "consumedUnits": 0
+    },
+    {
+      "skuId": "3b555118-da6a-4418-894f-7df1e2096870",
+      "skuPartNumber": "O365_BUSINESS_ESSENTIALS",
+      "capabilityStatus": "Enabled",
+      "prepaidUnits": {
+        "enabled": 1,
+        "warning": 0
+      },
+      "consumedUnits": 0
+    },
+    {
+      "skuId": "cbdc14ab-d96c-4c30-b9f4-6ada7cdc1d46",
+      "skuPartNumber": "SPB",
+      "capabilityStatus": "Enabled",
+      "prepaidUnits": {
+        "enabled": 0,
+        "warning": 0
+      },
+      "consumedUnits": 0
+    }
+  ],
+  "users": [
+    {
+      "id": "00000000-0000-0000-0000-000000000001",
+      "userPrincipalName": "test1@example.test",
+      "userType": "Member",
+      "accountEnabled": true,
+      "onPremisesImmutableId": "immutable",
+      "usageLocation": "CA",
+      "groupIds": [
+        "872d4475-cf3f-4498-be55-eb54ca37f99f"
+      ],
+      "assignedLicenses": [
+        {
+          "skuId": "f245ecc8-75af-4f8e-b61f-27d8114de5f3",
+          "disabledPlans": []
+        },
+        {
+          "skuId": "00000000-0000-0000-0000-000000000099",
+          "disabledPlans": []
+        }
+      ],
+      "licenseAssignmentStates": [
+        {
+          "skuId": "f245ecc8-75af-4f8e-b61f-27d8114de5f3",
+          "assignedByGroup": null,
+          "state": "Active"
+        },
+        {
+          "skuId": "00000000-0000-0000-0000-000000000099",
+          "assignedByGroup": null,
+          "state": "Active"
+        }
+      ]
+    },
+    {
+      "id": "00000000-0000-0000-0000-000000000002",
+      "userPrincipalName": "test2@example.test",
+      "userType": "Member",
+      "accountEnabled": false,
+      "onPremisesImmutableId": "immutable",
+      "usageLocation": null,
+      "groupIds": [
+        "754b52a3-0854-4564-81d7-737c2a16be2b"
+      ],
+      "assignedLicenses": [],
+      "licenseAssignmentStates": []
+    },
+    {
+      "id": "00000000-0000-0000-0000-000000000003",
+      "userPrincipalName": "test3@example.test",
+      "userType": "Member",
+      "accountEnabled": true,
+      "onPremisesImmutableId": null,
+      "usageLocation": "CA",
+      "groupIds": [],
+      "assignedLicenses": [
+        {
+          "skuId": "f245ecc8-75af-4f8e-b61f-27d8114de5f3",
+          "disabledPlans": []
+        }
+      ],
+      "licenseAssignmentStates": [
+        {
+          "skuId": "f245ecc8-75af-4f8e-b61f-27d8114de5f3",
+          "assignedByGroup": null,
+          "state": "Active"
+        }
+      ]
+    },
+    {
+      "id": "00000000-0000-0000-0000-000000000004",
+      "userPrincipalName": "test4@example.test",
+      "userType": "Member",
+      "accountEnabled": true,
+      "onPremisesImmutableId": "immutable",
+      "usageLocation": "CA",
+      "groupIds": [
+        "754b52a3-0854-4564-81d7-737c2a16be2b",
+        "f1487162-81bc-4051-8d0f-b123ab557060"
+      ],
+      "assignedLicenses": [
+        {
+          "skuId": "cbdc14ab-d96c-4c30-b9f4-6ada7cdc1d46",
+          "disabledPlans": []
+        }
+      ],
+      "licenseAssignmentStates": [
+        {
+          "skuId": "cbdc14ab-d96c-4c30-b9f4-6ada7cdc1d46",
+          "assignedByGroup": null,
+          "state": "Active"
+        }
+      ]
+    }
+  ]
+}
