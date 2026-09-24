@@ -74,7 +74,7 @@ All 59 cases passed with PowerShell 7.6.6 when these files were added. Earlier l
 
 A Git commit does not publish a runbook or change its schedule. There is no deployment automation added here. To update Azure, back up its published content and schedule binding, upload the revised file as a draft, test it, publish it, and verify the published content and job result. Check the schedule binding after publication because Azure can replace its binding ID.
 
-The source files in this migration commit match the SHA-256 hashes recorded after deployment:
+The source files at migration commit `3d01317` match the SHA-256 hashes recorded after deployment. Later comment changes alter file hashes without changing runbook behaviour:
 
 | Script | SHA-256 |
 | --- | --- |

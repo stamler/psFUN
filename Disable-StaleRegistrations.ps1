@@ -1,3 +1,56 @@
+<#
+.SYNOPSIS
+Disable stale Windows Workplace registrations in Microsoft Entra ID.
+
+.DESCRIPTION
+This Azure Automation runbook limits continued use of old personal Windows
+registrations that have no recent recorded sign-in. It uses the UserAutomation
+system-assigned managed identity and Microsoft Graph REST calls instead of the
+Azure Automation Bot user credential.
+
+The script reads every page of devices and selects enabled Workplace
+registrations with a known approximate last sign-in at least 90 days old. Only
+Windows registrations can be changed. Stale registrations on other platforms
+are reported for manual review. Devices with no sign-in date, joined devices,
+and registrations already disabled are excluded.
+
+Preview reports candidates without writes. Apply checks the candidate count
+against MaxChanges before any write. For each candidate, it reads the device
+again and checks its type, platform, enabled state, and sign-in date. If it is
+still eligible, it sets accountEnabled to false and verifies the result.
+Verification retries reads to allow for delayed Graph updates; it does not retry
+the write. This disables the directory registration; it does not delete or wipe
+the device.
+
+.PARAMETER Mode
+Preview reports candidates. Apply disables and verifies them. Default: Preview.
+
+.PARAMETER MaxChanges
+Maximum number of Windows candidates allowed in an Apply run. If there are more,
+stop before any write. Default: 25.
+
+.PARAMETER DeviceIds
+Optional Entra device object IDs to process, not hardware IDs or the deviceId
+property. An empty list includes all eligible Windows registrations. Manual
+review output for other platforms is not restricted by this list.
+
+.EXAMPLE
+.\Disable-StaleRegistrations.ps1 -Mode Preview
+Report stale registrations without changing devices.
+
+.EXAMPLE
+.\Disable-StaleRegistrations.ps1 -Mode Apply -MaxChanges 25
+Disable at most 25 eligible Windows registrations.
+
+.NOTES
+Runtime: Azure Automation Windows PowerShell 5.1; no AzureAD module required.
+The deployed identity has Graph Device.ReadWrite.All and the Entra Cloud Device
+Administrator role. Azure supplies IDENTITY_ENDPOINT and IDENTITY_HEADER.
+The approximate sign-in date is the decision input; it is not a full activity
+history. A failure stops the job. Earlier disables are not rolled back.
+Schedule parameters are set in Azure. See AUTOMATION.md for deployment details.
+#>
+
 param(
     [ValidateSet('Preview', 'Apply')][string]$Mode = 'Preview',
     [ValidateRange(1, 1000)][int]$MaxChanges = 25,

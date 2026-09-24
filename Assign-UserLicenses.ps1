@@ -1,3 +1,64 @@
+<#
+.SYNOPSIS
+Keep TBTE Microsoft 365 licenses aligned with the software groups.
+
+.DESCRIPTION
+This Azure Automation runbook turns software group membership into license
+assignments. It replaces the MSOnline script that signed in as Azure Automation
+Bot. It uses the UserAutomation system-assigned managed identity and Microsoft
+Graph REST calls, so it does not depend on a user's password or sign-in state.
+
+The three groups are the source of the license policy, even for disabled users:
+- TBTE_Desktop_Software: Business Standard (O365_BUSINESS_PREMIUM).
+- TBTE_Mobile_Software: Business Basic (O365_BUSINESS_ESSENTIALS).
+- TBTE_Premium_Software: Business Premium (SPB).
+
+The script reads all pages of groups, members, users, and subscribed plans. It
+logs users in more than one group and selects the highest available plan:
+Premium > Desktop > Basic. A plan the user already holds counts as available.
+It plans single-group users first, then uses projected seat counts to select
+plans for users in multiple groups.
+
+Preview reports the plan without writes. Apply checks conflicts, the change
+limit, and a feasible seat order before any write. It reads each user's current
+licenses and groups again before changing that user. If an addition needs a
+usage-location change, it sets the location to CA. It then updates the licenses
+and checks the result, with read retries for delayed Graph updates.
+
+Only the three managed plans can be removed. Removal requires an on-premises
+immutable ID, as in the old script. Unrelated licenses are kept. Inherited or
+unresolved managed assignments that need a change require manual review.
+
+.PARAMETER Mode
+Preview reports proposed changes. Apply makes and verifies them. Default: Preview.
+
+.PARAMETER MaxChanges
+Maximum number of users in an Apply plan. If the plan exceeds this limit, stop
+before writes. Default: 10. This is a user count, not a count of individual SKUs.
+
+.PARAMETER UserIds
+Optional user object IDs to process. An empty list includes all users. The script
+still reads the complete directory and group lists to check the plan.
+
+.EXAMPLE
+.\Assign-UserLicenses.ps1 -Mode Preview
+Report license changes without changing users.
+
+.EXAMPLE
+.\Assign-UserLicenses.ps1 -Mode Apply -MaxChanges 10
+Apply a plan that changes no more than ten users.
+
+.NOTES
+Runtime: Azure Automation Windows PowerShell 5.1; no MSOnline module required.
+The group IDs and license policy in this file are specific to TBTE.
+The deployed identity has Graph User.ReadWrite.All for license and usage-location
+writes, GroupMember.ReadBasic.All for groups, and LicenseAssignment.Read.All for
+licensing reads. Azure supplies IDENTITY_ENDPOINT and IDENTITY_HEADER.
+A failure stops the job. Earlier writes are not rolled back. Seat availability
+can change after planning, so a concurrent change can still cause a write to fail.
+Schedule parameters are set in Azure. See AUTOMATION.md for deployment details.
+#>
+
 param(
     [ValidateSet('Preview', 'Apply')][string]$Mode = 'Preview',
     [ValidateRange(1, 500)][int]$MaxChanges = 10,

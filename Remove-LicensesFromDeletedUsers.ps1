@@ -1,3 +1,39 @@
+<#
+.SYNOPSIS
+Audit saved license assignments on deleted Microsoft Entra users.
+
+.DESCRIPTION
+This Azure Automation runbook preserves a check on deleted-user licensing
+without the old restore, remove-license, and delete cycle. Microsoft 365 returns
+a license seat when its user is deleted. Restoring that user to remove a saved
+assignment is therefore not part of this audit.
+
+The script uses the UserAutomation system-assigned managed identity and
+Microsoft Graph REST calls instead of the Azure Automation Bot user credential.
+It reads every page of deleted user objects, then reports each user whose
+assignedLicenses collection still contains a saved assignment. Output includes
+the user object ID, principal name, deletion date, and saved SKU IDs. A final
+summary gives the number checked and the number that need review.
+
+This is a read-only directory audit, despite the retained script name. It never
+restores a user, assigns or removes a license, or deletes an account. A saved
+assignment does not prove that a seat is consumed. Review such records before
+deciding whether any action is needed.
+
+.EXAMPLE
+.\Remove-LicensesFromDeletedUsers.ps1
+Report saved assignments on deleted users without changing the directory.
+
+.NOTES
+Runtime: Azure Automation Windows PowerShell 5.1; no MSOnline module required.
+The deployed identity has Graph User.Read.All and User.ReadWrite.All. This
+script uses only user reads. Azure supplies IDENTITY_ENDPOINT and IDENTITY_HEADER.
+Authentication errors, failed reads, repeated pages, or unexpected page URLs
+stop the job. All pages must be read before assignment review output is produced.
+There are no script parameters. Scheduling is set in Azure.
+See AUTOMATION.md for deployment details.
+#>
+
 # Microsoft 365 returns a license seat when its user is deleted.
 # Audit saved assignments without restoring accounts or changing their retention period.
 $ErrorActionPreference = 'Stop'

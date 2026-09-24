@@ -1,3 +1,59 @@
+<#
+.SYNOPSIS
+Prepare a read-only review of guest accounts with no matching recent audit activity.
+
+.DESCRIPTION
+This Azure Automation runbook supports guest access reviews. It replaces the
+Azure Automation Bot script that searched audit logs and deleted inactive guests.
+The replacement keeps deletion off because missing audit activity alone does
+not prove that a guest no longer needs access.
+
+The script uses the UserAutomation system-assigned managed identity and Microsoft
+Graph REST calls. It checks the returned identity and audit-read permission,
+then reads all guest accounts. It creates or reuses a Microsoft 365 audit query
+for 90 days of UserLoggedIn, SecureLinkUsed, and TeamsSessionStarted events.
+It waits for success and checks the query's dates, operations, and filters.
+
+Every result page must be read before any guest is reported for review. Activity
+is matched against guest object IDs, principal names, mail addresses, and other
+mail addresses. Audit actor IDs and membership-prefixed names are also checked.
+Guests with matching activity, recent account creation, or recent invitation
+state changes are excluded. Missing creation dates are separate review items.
+
+The script rejects incomplete or unexpected queries, empty tenant audit results,
+repeated pages, and results above MaxRecords. Transient server errors on reads
+have bounded retries. Query creation is not retried because the first request
+might already have created a query. The only write is creation of the audit
+query; no directory writes or guest deletions are permitted.
+
+.PARAMETER AuditQueryId
+Optional existing audit query ID. Its window must be 90 days, end within the
+last day, and cover exactly the required operations without extra restrictions.
+An empty value creates a new query. A pending query ID is logged for later reuse.
+
+.PARAMETER WaitSeconds
+Maximum polling wait for a query to finish. Default: 900 seconds. The limit is
+checked between requests; it is not a deadline for the whole run or record reads.
+
+.PARAMETER MaxRecords
+Maximum audit records to process. Default: 500000. Exceeding the limit stops the
+run before candidate output; it does not turn partial results into a review list.
+
+.EXAMPLE
+.\Remove-StaleGuests.ps1
+Create a new audit query and report guests for review. Do not delete any guests.
+
+.NOTES
+Runtime: Azure Automation Windows PowerShell 5.1; no Exchange Online module needed.
+The expected managed identity object ID is specific to TBTE. The token must have
+Graph AuditLogsQuery.Read.All plus User.Read.All or User.ReadWrite.All. Azure
+supplies IDENTITY_ENDPOINT and IDENTITY_HEADER. Access tokens are never logged.
+These three audit operations do not cover every successful sign-in. Add an Entra
+last-successful-sign-in check and complete a business review before implementing
+automatic deletion. The current script does not include that extra sign-in check.
+Schedule parameters are set in Azure. See AUTOMATION.md for deployment details.
+#>
+
 param(
     [string]$AuditQueryId = '',
     [ValidateRange(1, 1800)][int]$WaitSeconds = 900,
