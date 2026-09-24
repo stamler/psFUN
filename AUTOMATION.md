@@ -13,11 +13,11 @@ This table records the settings checked during the September 24 migration. Sched
 | `Disable-StaleRegistrations.ps1` | Disable enabled Windows Workplace registrations with a known last sign-in at least 90 days old. Report other stale platforms for review. | Hourly, minute 52: `Mode=Apply`, `MaxChanges=25` |
 | `Assign-UserLicenses.ps1` | Use the three TBTE software groups to assign licenses. | Hourly, minute 55: `Mode=Apply`, `MaxChanges=10` |
 | `Remove-LicensesFromDeletedUsers.ps1` | Read-only audit of deleted users and any saved license assignments. It does not restore users or change licenses. | Hourly; no parameters |
-| `Remove-StaleGuests.ps1` | Read-only review of guest age, invitation updates, and three audit operations over 90 days. It cannot delete guests. | Hourly, minute 52; no parameters |
+| `Remove-StaleGuests.ps1` | Published version: read-only preview. The source update adds guarded automatic deletion; deployment is pending. | Current: hourly, minute 52, no parameters. Planned: `Mode=Apply`, `MaxDeletions=10`. |
 
 The Azure schedule named `Daily` runs hourly. Check its recurrence rather than relying on its name.
 
-Both scripts with an Apply mode default to Preview. Their change limits stop a run before writes if the plan exceeds the limit. Apply runs recheck each target and verify each write. A later failure can leave earlier changes applied; these jobs are not transactions.
+All scripts with an Apply mode default to Preview. Device cleanup and license assignment stop before writes if the plan exceeds their change limit. Guest cleanup processes at most MaxDeletions candidates and defers the rest. Apply runs recheck each target and verify each write. A later failure can leave earlier changes applied; these jobs are not transactions.
 
 ### License policy
 
@@ -29,11 +29,20 @@ Both scripts with an Apply mode default to Preview. Their change limits stop a r
 - Preserve unrelated licenses. Remove managed plans only from users with an on-premises immutable ID, as in the old script.
 - Before adding a license, set usage location to `CA` if it differs.
 
-### Guest preview limits
+### Guest cleanup update
 
-The preview searches `UserLoggedIn`, `SecureLinkUsed`, and `TeamsSessionStarted`. It stops if the query fails, is incomplete, has unexpected filters, or returns no tenant activity. It reads every result page before reporting review candidates.
+The source update restores automatic deletion with these checks:
 
-These three operations do not cover every successful sign-in. During validation, a separate Entra sign-in check excluded one audit-only candidate. The published script does not yet include that extra check. Add the last-successful-sign-in safeguard and complete a business review before implementing automatic deletion. No guest deletion is enabled in this version.
+- Keep guests with a successful interactive or non-interactive sign-in within 90 days. Recent sign-in attempts also protect an account.
+- Keep guests with recent account creation, invitation changes, or matching `UserLoggedIn`, `SecureLinkUsed`, or `TeamsSessionStarted` audit activity.
+- Leave missing or invalid successful-sign-in history for manual review. This includes invitations that were never accepted.
+- Require complete directory and audit reads before selecting candidates. Permission failures and incomplete audit results stop the run.
+- Default to Preview. Apply must create a fresh audit query, read each guest again, check for changes, and verify each deletion in Deleted users.
+- Delete at most ten guests per run by default, oldest first. Defer the rest to later runs. A failed write stops the job; prior writes are not rolled back.
+
+Microsoft can delay sign-in and audit reports. Rechecking the records reduces the risk but does not remove that reporting delay. Deletion uses the recoverable user-delete endpoint; this script never permanently purges an account.
+
+The existing published version still runs in Preview. Graph `AuditLog.Read.All` was approved and granted on September 24 for Entra sign-in data. It is separate from `AuditLogsQuery.Read.All` for Microsoft 365 activity queries. Azure still returns cached Graph tokens without the new grant, and the draft test stops before directory changes. Retry after the cache refresh, validate a live Preview, then publish and enable Apply on the existing schedule. The 88 offline tests passed; the new live Preview and deletion run remain unverified.
 
 ### Deleted-user audit
 
@@ -50,6 +59,7 @@ The system-assigned identity object ID is `6959416e-404d-4485-a5af-e23264eb240d`
 | Graph `GroupMember.ReadBasic.All` | Read license group membership |
 | Graph `LicenseAssignment.Read.All` | Read licensing data |
 | Graph `AuditLogsQuery.Read.All` | Create and read Microsoft 365 audit queries |
+| Graph `AuditLog.Read.All` | Read Entra sign-in data; granted for the guest-cleanup update, awaiting token cache refresh |
 | Graph `User.Read.All` | Existing read grant, retained after the read/write grant was added |
 
 The old bot account, its roles, stored credential, and risk state were not changed by this migration.
@@ -66,9 +76,9 @@ Get-ChildItem ./tests/*.Tests.ps1 | Sort-Object Name | ForEach-Object {
 }
 ```
 
-The tests mock all service calls and use synthetic user data. They make no Azure changes. The 59 cases cover normal results, preview and Apply behaviour, limits, pagination, permission failures, write failures, delayed verification, and guest query failures. Device test objects are created in the test file; the other suites use JSON fixtures. Fixture changes within tests simulate the named case.
+The tests mock all service calls and use synthetic user data. They make no Azure changes. The 88 cases cover normal results, preview and Apply behaviour, limits, pagination, permission failures, write failures, delayed verification, and guest query failures. Device test objects are created in the test file; the other suites use JSON fixtures. Fixture changes within tests simulate the named case.
 
-All 59 cases passed with PowerShell 7.6.6 when these files were added. Earlier live validation used the Azure PowerShell 5.1 runtime. The unrelated `radiator/ConvertTo-Json` submodule has its own Pester 4 tests.
+The original 59 cases passed when these files were added. The guest cleanup update expands the runbook suite to 88 cases, including successful-sign-in protection, unknown history, deletion limits, and changes detected before deletion. Earlier live validation used the Azure PowerShell 5.1 runtime. The unrelated `radiator/ConvertTo-Json` submodule has its own Pester 4 tests.
 
 ## Deployment and verification
 

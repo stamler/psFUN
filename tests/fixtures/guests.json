@@ -3,7 +3,8 @@
     "oid": "6959416e-404d-4485-a5af-e23264eb240d",
     "roles": [
       "User.ReadWrite.All",
-      "AuditLogsQuery.Read.All"
+      "AuditLogsQuery.Read.All",
+      "AuditLog.Read.All"
     ]
   },
   "guests": [
@@ -15,7 +16,13 @@
       "id": "00000000-0000-0000-0000-000000000001",
       "displayName": "active",
       "userPrincipalName": "active_example.test#EXT#@tenant.test",
-      "mail": "active@example.test"
+      "mail": "active@example.test",
+      "userType": "Guest",
+      "signInActivity": {
+        "lastSuccessfulSignInDateTime": "2020-01-02T00:00:00Z",
+        "lastSignInDateTime": "2020-01-02T00:00:00Z",
+        "lastNonInteractiveSignInDateTime": "2020-01-02T00:00:00Z"
+      }
     },
     {
       "createdDateTime": "2020-01-01T00:00:00Z",
@@ -25,7 +32,13 @@
       "id": "00000000-0000-0000-0000-000000000002",
       "displayName": "inactive",
       "userPrincipalName": "inactive_example.test#EXT#@tenant.test",
-      "mail": "inactive@example.test"
+      "mail": "inactive@example.test",
+      "userType": "Guest",
+      "signInActivity": {
+        "lastSuccessfulSignInDateTime": "2020-01-02T00:00:00Z",
+        "lastSignInDateTime": "2020-01-02T00:00:00Z",
+        "lastNonInteractiveSignInDateTime": "2020-01-02T00:00:00Z"
+      }
     },
     {
       "createdDateTime": "2099-01-01T00:00:00Z",
@@ -35,7 +48,13 @@
       "id": "00000000-0000-0000-0000-000000000003",
       "displayName": "recent",
       "userPrincipalName": "recent_example.test#EXT#@tenant.test",
-      "mail": "recent@example.test"
+      "mail": "recent@example.test",
+      "userType": "Guest",
+      "signInActivity": {
+        "lastSuccessfulSignInDateTime": "2020-01-02T00:00:00Z",
+        "lastSignInDateTime": "2020-01-02T00:00:00Z",
+        "lastNonInteractiveSignInDateTime": "2020-01-02T00:00:00Z"
+      }
     },
     {
       "createdDateTime": null,
@@ -45,7 +64,13 @@
       "id": "00000000-0000-0000-0000-000000000004",
       "displayName": "missing",
       "userPrincipalName": "missing_example.test#EXT#@tenant.test",
-      "mail": "missing@example.test"
+      "mail": "missing@example.test",
+      "userType": "Guest",
+      "signInActivity": {
+        "lastSuccessfulSignInDateTime": "2020-01-02T00:00:00Z",
+        "lastSignInDateTime": "2020-01-02T00:00:00Z",
+        "lastNonInteractiveSignInDateTime": "2020-01-02T00:00:00Z"
+      }
     },
     {
       "createdDateTime": "2020-01-01T00:00:00Z",
@@ -55,7 +80,13 @@
       "id": "00000000-0000-0000-0000-000000000005",
       "displayName": "invited",
       "userPrincipalName": "invited_example.test#EXT#@tenant.test",
-      "mail": "invited@example.test"
+      "mail": "invited@example.test",
+      "userType": "Guest",
+      "signInActivity": {
+        "lastSuccessfulSignInDateTime": "2020-01-02T00:00:00Z",
+        "lastSignInDateTime": "2020-01-02T00:00:00Z",
+        "lastNonInteractiveSignInDateTime": "2020-01-02T00:00:00Z"
+      }
     },
     {
       "createdDateTime": "2020-01-01T00:00:00Z",
@@ -65,7 +96,13 @@
       "id": "00000000-0000-0000-0000-000000000006",
       "displayName": "actor",
       "userPrincipalName": "actor_example.test#EXT#@tenant.test",
-      "mail": "actor@example.test"
+      "mail": "actor@example.test",
+      "userType": "Guest",
+      "signInActivity": {
+        "lastSuccessfulSignInDateTime": "2020-01-02T00:00:00Z",
+        "lastSignInDateTime": "2020-01-02T00:00:00Z",
+        "lastNonInteractiveSignInDateTime": "2020-01-02T00:00:00Z"
+      }
     },
     {
       "createdDateTime": "2020-01-01T00:00:00Z",
@@ -75,7 +112,77 @@
       "id": "00000000-0000-0000-0000-000000000007",
       "displayName": "shared",
       "userPrincipalName": "shared_example.test#EXT#@tenant.test",
-      "mail": "active@example.test"
+      "mail": "active@example.test",
+      "userType": "Guest",
+      "signInActivity": {
+        "lastSuccessfulSignInDateTime": "2020-01-02T00:00:00Z",
+        "lastSignInDateTime": "2020-01-02T00:00:00Z",
+        "lastNonInteractiveSignInDateTime": "2020-01-02T00:00:00Z"
+      }
+    },
+    {
+      "id": "00000000-0000-0000-0000-000000000008",
+      "userType": "Guest",
+      "displayName": "successful-recent",
+      "userPrincipalName": "successful-recent_example.test#EXT#@tenant.test",
+      "mail": "successful-recent@example.test",
+      "otherMails": [],
+      "createdDateTime": "2020-01-01T00:00:00Z",
+      "externalUserState": "Accepted",
+      "externalUserStateChangeDateTime": null,
+      "signInActivity": {
+        "lastSuccessfulSignInDateTime": "2099-01-01T00:00:00Z",
+        "lastSignInDateTime": "2020-01-02T00:00:00Z",
+        "lastNonInteractiveSignInDateTime": "2020-01-02T00:00:00Z"
+      }
+    },
+    {
+      "id": "00000000-0000-0000-0000-000000000009",
+      "userType": "Guest",
+      "displayName": "unknown-signin",
+      "userPrincipalName": "unknown-signin_example.test#EXT#@tenant.test",
+      "mail": "unknown-signin@example.test",
+      "otherMails": [],
+      "createdDateTime": "2020-01-01T00:00:00Z",
+      "externalUserState": "Accepted",
+      "externalUserStateChangeDateTime": null,
+      "signInActivity": {
+        "lastSuccessfulSignInDateTime": null,
+        "lastSignInDateTime": "2020-01-02T00:00:00Z",
+        "lastNonInteractiveSignInDateTime": "2020-01-02T00:00:00Z"
+      }
+    },
+    {
+      "id": "00000000-0000-0000-0000-000000000010",
+      "userType": "Guest",
+      "displayName": "noninteractive-recent",
+      "userPrincipalName": "noninteractive-recent_example.test#EXT#@tenant.test",
+      "mail": "noninteractive-recent@example.test",
+      "otherMails": [],
+      "createdDateTime": "2020-01-01T00:00:00Z",
+      "externalUserState": "Accepted",
+      "externalUserStateChangeDateTime": null,
+      "signInActivity": {
+        "lastSuccessfulSignInDateTime": "2020-01-02T00:00:00Z",
+        "lastSignInDateTime": "2020-01-02T00:00:00Z",
+        "lastNonInteractiveSignInDateTime": "2099-01-01T00:00:00Z"
+      }
+    },
+    {
+      "id": "00000000-0000-0000-0000-000000000011",
+      "userType": "Guest",
+      "displayName": "inactive-second",
+      "userPrincipalName": "inactive-second_example.test#EXT#@tenant.test",
+      "mail": "inactive-second@example.test",
+      "otherMails": [],
+      "createdDateTime": "2020-01-01T00:00:00Z",
+      "externalUserState": "Accepted",
+      "externalUserStateChangeDateTime": null,
+      "signInActivity": {
+        "lastSuccessfulSignInDateTime": "2020-01-02T00:00:00Z",
+        "lastSignInDateTime": "2020-01-02T00:00:00Z",
+        "lastNonInteractiveSignInDateTime": "2020-01-02T00:00:00Z"
+      }
     }
   ],
   "records": [
